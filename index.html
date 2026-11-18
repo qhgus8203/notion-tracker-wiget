@@ -20,14 +20,14 @@
             height: 100vh;
         }
 
-        /* 정사각형 컴팩트 틀 */
+        /* 콤팩트 정사각형 카드 (여백 축소 및 균형 조정) */
         .widget-card {
-            width: 220px;
-            height: 220px;
+            width: 205px;
+            height: 205px;
             background-color: #FFF0F7;
             border: 1px solid #DBD5D7;
-            border-radius: 20px;
-            padding: 20px 18px;
+            border-radius: 18px;
+            padding: 22px 18px 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -35,42 +35,39 @@
             box-shadow: 0 4px 12px rgba(97, 83, 87, 0.05);
         }
 
-        /* 상단 연도 및 퍼센트 */
-        .header-group {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .sub-label {
-            font-size: 10px;
-            color: #615357;
-            opacity: 0.7;
-            font-weight: 500;
-        }
-
+        /* 상단 연도 */
         .year-title {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 800;
             color: #615357;
             letter-spacing: 0.5px;
-            line-height: 1.1;
+            line-height: 1;
         }
 
-        .percent-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #615357;
-            margin-top: 2px;
-        }
-
-        /* 프로그레스바 영역 */
+        /* 프로그레스바 + 움직이는 퍼센트 영역 */
         .progress-container {
             width: 100%;
             display: flex;
             flex-direction: column;
             gap: 5px;
+            margin-top: 6px;
+        }
+
+        .percent-track {
+            position: relative;
+            width: 100%;
+            height: 16px;
+        }
+
+        .percent-badge {
+            position: absolute;
+            top: 0;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 700;
+            color: #615357;
+            white-space: nowrap;
+            transition: left 0.5s ease;
         }
 
         .progress-bar-bg {
@@ -94,7 +91,7 @@
             justify-content: space-between;
             font-size: 9px;
             color: #615357;
-            opacity: 0.65;
+            opacity: 0.5;
             font-family: monospace;
         }
 
@@ -102,35 +99,37 @@
         .stats-row {
             width: 100%;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            padding-top: 4px;
         }
 
         .stat-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 3px;
             flex: 1;
         }
 
         .stat-number {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             color: #615357;
+            line-height: 1.1;
         }
 
+        /* 라벨 투명도 상향 (더 은은하게) */
         .stat-desc {
             font-size: 9.5px;
+            font-weight: 500;
             color: #615357;
-            opacity: 0.75;
+            opacity: 0.52;
         }
 
         /* 세로 구분선 */
         .divider {
             width: 1px;
-            height: 22px;
+            height: 24px;
             background-color: #DBD5D7;
         }
     </style>
@@ -138,15 +137,14 @@
 <body>
 
     <div class="widget-card">
-        <!-- 상단: 올해 / 연도 / 진행률% -->
-        <div class="header-group">
-            <span class="sub-label">올해</span>
-            <div class="year-title" id="yearText">2026</div>
-            <div class="percent-title" id="percentText">0.00%</div>
-        </div>
+        <!-- 상단: 연도만 단독 배치 -->
+        <div class="year-title" id="yearText">2026</div>
 
-        <!-- 중단: 프로그레스바 + Jan 1 ~ Dec 31 -->
+        <!-- 중단: 그래프 끝에 따라 움직이는 퍼센트 + 프로그레스바 -->
         <div class="progress-container">
+            <div class="percent-track">
+                <span class="percent-badge" id="percentText">0.00%</span>
+            </div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progressFill"></div>
             </div>
@@ -156,21 +154,21 @@
             </div>
         </div>
 
-        <!-- 하단: 경과 / 남음 / 전체 일수 가로 배열 -->
+        <!-- 하단: 경과 일수 / 남은 일수 / 전체 -->
         <div class="stats-row">
             <div class="stat-item">
                 <span class="stat-number" id="passedDays">0</span>
-                <span class="stat-desc">일 경과</span>
+                <span class="stat-desc">경과 일수</span>
             </div>
             <div class="divider"></div>
             <div class="stat-item">
                 <span class="stat-number" id="leftDays">0</span>
-                <span class="stat-desc">일 남음</span>
+                <span class="stat-desc">남은 일수</span>
             </div>
             <div class="divider"></div>
             <div class="stat-item">
                 <span class="stat-number" id="totalDays">365</span>
-                <span class="stat-desc" id="yearTypeDesc">일 (평년)</span>
+                <span class="stat-desc">전체</span>
             </div>
         </div>
     </div>
@@ -180,25 +178,27 @@
             const now = new Date();
             const year = now.getFullYear();
             
-            // 윤년 판별
             const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
             const totalDays = isLeapYear ? 366 : 365;
 
             const start = new Date(year, 0, 1);
-            
-            // 경과 일수 및 남은 일수 계산
             const passedDays = Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1;
             const leftDays = totalDays - passedDays;
-            const percent = ((passedDays / totalDays) * 100).toFixed(2);
+            const rawPercent = (passedDays / totalDays) * 100;
+            const percent = rawPercent.toFixed(2);
 
-            // HTML 반영
+            const percentEl = document.getElementById('percentText');
             document.getElementById('yearText').textContent = year;
-            document.getElementById('percentText').textContent = percent + '%';
+            percentEl.textContent = percent + '%';
             document.getElementById('progressFill').style.width = percent + '%';
+
+            // 퍼센트 숫자가 바 끝을 따라가되, 양 끝(0% 또는 100% 근처)에서 카드 밖으로 잘리지 않도록 보정
+            const clampedPos = Math.min(Math.max(rawPercent, 10), 90);
+            percentEl.style.left = clampedPos + '%';
+
             document.getElementById('passedDays').textContent = passedDays;
             document.getElementById('leftDays').textContent = leftDays;
             document.getElementById('totalDays').textContent = totalDays;
-            document.getElementById('yearTypeDesc').textContent = isLeapYear ? '일 (윤년)' : '일 (평년)';
         }
 
         updateYearProgress();

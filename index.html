@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Year Progress</title>
+    <title>Year Progress Calendar</title>
     <style>
         * {
             box-sizing: border-box;
@@ -20,24 +20,83 @@
             height: 100vh;
         }
 
-        /* 콤팩트 정사각형 카드 */
+        /* 스프링 고리가 들어갈 공간을 포함한 래퍼 */
+        .calendar-wrapper {
+            position: relative;
+            padding-top: 10px;
+        }
+
+        /* 상단 스프링 고리 컨테이너 */
+        .springs-container {
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+            padding: 0 24px;
+            z-index: 10;
+        }
+
+        /* 개별 스프링 고리 + 구멍 디테일 */
+        .spring-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .spring-ring {
+            width: 6px;
+            height: 16px;
+            background: linear-gradient(90deg, #615357 0%, #8a787d 50%, #615357 100%);
+            border-radius: 3px;
+            box-shadow: 0 2px 3px rgba(97, 83, 87, 0.25);
+        }
+
+        .spring-hole {
+            width: 8px;
+            height: 4px;
+            background-color: #DBD5D7;
+            border-radius: 50%;
+            margin-top: -2px;
+        }
+
+        /* 콤팩트 정사각형 달력 본체 */
         .widget-card {
             width: 205px;
             height: 205px;
             background-color: #FFF0F7;
             border: 1px solid #DBD5D7;
             border-radius: 18px;
-            padding: 18px 16px;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(97, 83, 87, 0.05);
+            box-shadow: 0 6px 14px rgba(97, 83, 87, 0.08);
         }
 
-        /* 상단 연도 (살짝 아래로 내리고 밑줄 추가) */
+        /* 달력 상단 헤더 바 (종이 뜯는 부분 느낌) */
+        .calendar-top-bar {
+            width: 100%;
+            height: 22px;
+            background-color: rgba(219, 213, 215, 0.38);
+            border-bottom: 1px dashed #DBD5D7;
+        }
+
+        /* 본문 영역 */
+        .calendar-body {
+            width: 100%;
+            flex: 1;
+            padding: 10px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 상단 연도 + 밑줄 */
         .year-wrapper {
-            margin-top: 4px;
             padding-bottom: 3px;
             border-bottom: 1px solid #DBD5D7;
             display: inline-block;
@@ -56,7 +115,7 @@
             width: 100%;
             background-color: rgba(255, 255, 255, 0.65);
             border-radius: 12px;
-            padding: 10px 10px 8px;
+            padding: 9px 10px 7px;
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -144,41 +203,60 @@
 </head>
 <body>
 
-    <div class="widget-card">
-        <!-- 상단: 연도 + 밑줄 -->
-        <div class="year-wrapper">
-            <div class="year-title" id="yearText">2026</div>
+    <div class="calendar-wrapper">
+        <!-- 상단 6개 스프링 고리 -->
+        <div class="springs-container">
+            <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
+            <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
+            <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
+            <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
+            <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
+            <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
         </div>
 
-        <!-- 중단: 하얀색 박스로 감싼 그래프 영역 -->
-        <div class="progress-box">
-            <div class="percent-track">
-                <span class="percent-badge" id="percentText">0.00%</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progressFill"></div>
-            </div>
-            <div class="date-range">
-                <span>Jan 1</span>
-                <span>Dec 31</span>
-            </div>
-        </div>
+        <!-- 달력 카드 본체 -->
+        <div class="widget-card">
+            <!-- 상단 달력 헤더 바 & 절취선 -->
+            <div class="calendar-top-bar"></div>
 
-        <!-- 하단: 경과 일수 / 남은 일수 / 전체 -->
-        <div class="stats-row">
-            <div class="stat-item">
-                <span class="stat-number" id="passedDays">0</span>
-                <span class="stat-desc">경과 일수</span>
-            </div>
-            <div class="divider"></div>
-            <div class="stat-item">
-                <span class="stat-number" id="leftDays">0</span>
-                <span class="stat-desc">남은 일수</span>
-            </div>
-            <div class="divider"></div>
-            <div class="stat-item">
-                <span class="stat-number" id="totalDays">365</span>
-                <span class="stat-desc">전체</span>
+            <!-- 본문 -->
+            <div class="calendar-body">
+                <!-- 연도 + 밑줄 -->
+                <div class="year-wrapper">
+                    <div class="year-title" id="yearText">2026</div>
+                </div>
+
+                <!-- 하얀색 박스로 감싼 그래프 영역 -->
+                <div class="progress-box">
+                    <div class="percent-track">
+                        <span class="percent-badge" id="percentText">0.00%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                    <div class="date-range">
+                        <span>Jan 1</span>
+                        <span>Dec 31</span>
+                    </div>
+                </div>
+
+                <!-- 하단: 경과 일수 / 남은 일수 / 전체 -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <span class="stat-number" id="passedDays">0</span>
+                        <span class="stat-desc">경과 일수</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="leftDays">0</span>
+                        <span class="stat-desc">남은 일수</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalDays">365</span>
+                        <span class="stat-desc">전체</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -202,7 +280,6 @@
             percentEl.textContent = percent + '%';
             document.getElementById('progressFill').style.width = percent + '%';
 
-            // 퍼센트 숫자가 그래프 끝을 따라 이동 (카드 밖 이탈 방지)
             const clampedPos = Math.min(Math.max(rawPercent, 12), 88);
             percentEl.style.left = clampedPos + '%';
 

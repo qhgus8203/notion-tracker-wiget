@@ -20,10 +20,10 @@
             height: 100vh;
         }
 
-        /* 스프링 고리가 들어갈 공간을 포함한 래퍼 */
+        /* 스프링 고리 상단 공간 확보 */
         .calendar-wrapper {
             position: relative;
-            padding-top: 10px;
+            padding-top: 12px;
         }
 
         /* 상단 스프링 고리 컨테이너 */
@@ -34,11 +34,11 @@
             width: 100%;
             display: flex;
             justify-content: space-evenly;
-            padding: 0 24px;
+            padding: 0 22px;
             z-index: 10;
         }
 
-        /* 개별 스프링 고리 + 구멍 디테일 */
+        /* 입체적이고 둥근 스프링 링 디테일 */
         .spring-item {
             display: flex;
             flex-direction: column;
@@ -46,19 +46,25 @@
         }
 
         .spring-ring {
-            width: 6px;
-            height: 16px;
-            background: linear-gradient(90deg, #615357 0%, #8a787d 50%, #615357 100%);
-            border-radius: 3px;
-            box-shadow: 0 2px 3px rgba(97, 83, 87, 0.25);
+            width: 8px;
+            height: 18px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 32% 28%, #a39297 0%, #615357 60%, #43383b 100%);
+            box-shadow: 
+                inset 0 1.5px 2px rgba(255, 255, 255, 0.45),
+                0 2px 3px rgba(97, 83, 87, 0.32);
+            position: relative;
+            z-index: 2;
         }
 
         .spring-hole {
-            width: 8px;
-            height: 4px;
-            background-color: #DBD5D7;
+            width: 10px;
+            height: 5px;
+            background-color: #c7bfc2;
             border-radius: 50%;
-            margin-top: -2px;
+            margin-top: -3px;
+            box-shadow: inset 0 1px 2px rgba(97, 83, 87, 0.4);
+            z-index: 1;
         }
 
         /* 콤팩트 정사각형 달력 본체 */
@@ -71,15 +77,14 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
             box-shadow: 0 6px 14px rgba(97, 83, 87, 0.08);
         }
 
-        /* 달력 상단 헤더 바 (종이 뜯는 부분 느낌) */
+        /* 달력 상단 헤더 바 (제본 영역) */
         .calendar-top-bar {
             width: 100%;
             height: 22px;
+            flex-shrink: 0;
             background-color: rgba(219, 213, 215, 0.38);
             border-bottom: 1px dashed #DBD5D7;
         }
@@ -88,14 +93,23 @@
         .calendar-body {
             width: 100%;
             flex: 1;
-            padding: 10px 16px 16px;
+            padding: 0 16px 15px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
         }
 
-        /* 상단 연도 + 밑줄 */
+        /* 상단 제본선과 그래프 박스 사이의 정중앙을 잡는 래퍼 */
+        .year-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* 연도 + 밑줄 */
         .year-wrapper {
             padding-bottom: 3px;
             border-bottom: 1px solid #DBD5D7;
@@ -119,6 +133,7 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+            margin-bottom: 12px;
         }
 
         .percent-track {
@@ -204,7 +219,7 @@
 <body>
 
     <div class="calendar-wrapper">
-        <!-- 상단 6개 스프링 고리 -->
+        <!-- 상단 6개 둥근 입체 스프링 고리 -->
         <div class="springs-container">
             <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
             <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
@@ -221,9 +236,11 @@
 
             <!-- 본문 -->
             <div class="calendar-body">
-                <!-- 연도 + 밑줄 -->
-                <div class="year-wrapper">
-                    <div class="year-title" id="yearText">2026</div>
+                <!-- 제본선과 그래프 박스 사이의 정중앙 영역 -->
+                <div class="year-area">
+                    <div class="year-wrapper">
+                        <div class="year-title" id="yearText">2026</div>
+                    </div>
                 </div>
 
                 <!-- 하얀색 박스로 감싼 그래프 영역 -->

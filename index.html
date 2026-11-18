@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year Progress</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* 정사각형 컴팩트 틀 */
+        .widget-card {
+            width: 220px;
+            height: 220px;
+            background-color: #FFF0F7;
+            border: 1px solid #DBD5D7;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(97, 83, 87, 0.05);
+        }
+
+        /* 연도 헤더 */
+        .year-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #615357;
+            letter-spacing: 1px;
+        }
+
+        /* 프로그레스바 영역 */
+        .progress-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            color: #615357;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background-color: #DBD5D7;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #615357;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        /* 하단 일수 정보 */
+        .stats-box {
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 11px;
+            color: #615357;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+        }
+
+        .stat-value {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="widget-card">
+        <!-- 가운데 해당 연도 -->
+        <div class="year-title" id="yearText">2026</div>
+
+        <!-- 프로그레스바 -->
+        <div class="progress-container">
+            <div class="progress-info">
+                <span>Year Progress</span>
+                <span id="percentText">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- 하단 일수 표시 (남은 일수, 경과 일수, 전체 일수) -->
+        <div class="stats-box">
+            <div class="stat-row">
+                <span class="stat-label">경과 일수</span>
+                <span class="stat-value" id="passedDays">0일</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">남은 일수</span>
+                <span class="stat-value" id="leftDays">0일</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">전체 일수</span>
+                <span class="stat-value" id="totalDays">365일</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateYearProgress() {
+            const now = new Date();
+            const year = now.getFullYear();
+            
+            // 윤년 계산
+            const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+            const totalDays = isLeapYear ? 366 : 365;
+
+            const start = new Date(year, 0, 1);
+            const end = new Date(year + 1, 0, 1);
+            
+            // 경과 밀리초 -> 일수 계산
+            const passedDays = Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1;
+            const leftDays = totalDays - passedDays;
+            const percent = ((passedDays / totalDays) * 100).toFixed(1);
+
+            // HTML 반영
+            document.getElementById('yearText').textContent = year;
+            document.getElementById('percentText').textContent = percent + '%';
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('passedDays').textContent = passedDays + '일';
+            document.getElementById('leftDays').textContent = leftDays + '일';
+            document.getElementById('totalDays').textContent = totalDays + '일';
+        }
+
+        updateYearProgress();
+    </script>
+</body>
+</html>

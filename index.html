@@ -20,10 +20,10 @@
             height: 100vh;
         }
 
-        /* 스프링 고리 상단 공간 확보 */
+        /* 스프링 고리가 들어갈 공간을 포함한 래퍼 */
         .calendar-wrapper {
             position: relative;
-            padding-top: 12px;
+            padding-top: 10px;
         }
 
         /* 상단 스프링 고리 컨테이너 */
@@ -34,11 +34,11 @@
             width: 100%;
             display: flex;
             justify-content: space-evenly;
-            padding: 0 22px;
+            padding: 0 24px;
             z-index: 10;
         }
 
-        /* 입체적이고 둥근 스프링 링 디테일 */
+        /* 이전 버전의 아기자기한 스프링 고리 & 구멍 */
         .spring-item {
             display: flex;
             flex-direction: column;
@@ -46,25 +46,19 @@
         }
 
         .spring-ring {
-            width: 8px;
-            height: 18px;
-            border-radius: 999px;
-            background: radial-gradient(circle at 32% 28%, #a39297 0%, #615357 60%, #43383b 100%);
-            box-shadow: 
-                inset 0 1.5px 2px rgba(255, 255, 255, 0.45),
-                0 2px 3px rgba(97, 83, 87, 0.32);
-            position: relative;
-            z-index: 2;
+            width: 6px;
+            height: 16px;
+            background: linear-gradient(90deg, #615357 0%, #8a787d 50%, #615357 100%);
+            border-radius: 3px;
+            box-shadow: 0 2px 3px rgba(97, 83, 87, 0.25);
         }
 
         .spring-hole {
-            width: 10px;
-            height: 5px;
-            background-color: #c7bfc2;
+            width: 8px;
+            height: 4px;
+            background-color: #DBD5D7;
             border-radius: 50%;
-            margin-top: -3px;
-            box-shadow: inset 0 1px 2px rgba(97, 83, 87, 0.4);
-            z-index: 1;
+            margin-top: -2px;
         }
 
         /* 콤팩트 정사각형 달력 본체 */
@@ -219,7 +213,7 @@
 <body>
 
     <div class="calendar-wrapper">
-        <!-- 상단 6개 둥근 입체 스프링 고리 -->
+        <!-- 상단 6개 스프링 고리 (이전 버전으로 복구) -->
         <div class="springs-container">
             <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
             <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
@@ -286,9 +280,15 @@
             const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
             const totalDays = isLeapYear ? 366 : 365;
 
+            // 자정(00:00:00) 기준으로 날짜 차이 정확히 계산
+            const today = new Date(year, now.getMonth(), now.getDate());
             const start = new Date(year, 0, 1);
-            const passedDays = Math.floor((now - start) / (1000 * 60 * 60 * 24)) + 1;
-            const leftDays = totalDays - passedDays;
+            
+            // 오늘 포함 경과 일수 (예: 11월 18일 기준 322일)
+            const passedDays = Math.floor((today - start) / (1000 * 60 * 60 * 24)) + 1;
+            // 오늘 포함 남은 일수 (디데이 기준 44일)
+            const leftDays = totalDays - passedDays + 1;
+            
             const rawPercent = (passedDays / totalDays) * 100;
             const percent = rawPercent.toFixed(2);
 

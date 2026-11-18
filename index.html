@@ -38,7 +38,7 @@
             z-index: 10;
         }
 
-        /* 이전 버전의 아기자기한 스프링 고리 & 구멍 */
+        /* 아기자기한 스프링 고리 & 구멍 */
         .spring-item {
             display: flex;
             flex-direction: column;
@@ -83,24 +83,16 @@
             border-bottom: 1px dashed #DBD5D7;
         }
 
-        /* 본문 영역 */
+        /* 본문 영역: 내부 콘텐츠 전체를 수직/수평 정중앙에 균형 있게 배치 */
         .calendar-body {
             width: 100%;
             flex: 1;
-            padding: 0 16px 15px;
+            padding: 12px 16px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* 상단 제본선과 그래프 박스 사이의 정중앙을 잡는 래퍼 */
-        .year-area {
-            flex: 1;
-            display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
+            gap: 13px;
         }
 
         /* 연도 + 밑줄 */
@@ -111,7 +103,7 @@
         }
 
         .year-title {
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 800;
             color: #615357;
             letter-spacing: 0.5px;
@@ -123,11 +115,10 @@
             width: 100%;
             background-color: rgba(255, 255, 255, 0.65);
             border-radius: 12px;
-            padding: 9px 10px 7px;
+            padding: 8px 10px 7px;
             display: flex;
             flex-direction: column;
             gap: 4px;
-            margin-bottom: 12px;
         }
 
         .percent-track {
@@ -188,24 +179,26 @@
             flex: 1;
         }
 
+        /* 숫자 크기 축소 및 한글 라벨과 동일한 은은한 톤 적용 */
         .stat-number {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
             color: #615357;
+            opacity: 0.6;
             line-height: 1.1;
         }
 
         .stat-desc {
-            font-size: 9px;
+            font-size: 8.5px;
             font-weight: 500;
             color: #615357;
-            opacity: 0.52;
+            opacity: 0.55;
         }
 
         /* 세로 구분선 */
         .divider {
             width: 1px;
-            height: 22px;
+            height: 20px;
             background-color: #DBD5D7;
         }
     </style>
@@ -213,7 +206,7 @@
 <body>
 
     <div class="calendar-wrapper">
-        <!-- 상단 6개 스프링 고리 (이전 버전으로 복구) -->
+        <!-- 상단 6개 스프링 고리 -->
         <div class="springs-container">
             <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
             <div class="spring-item"><div class="spring-ring"></div><div class="spring-hole"></div></div>
@@ -228,13 +221,11 @@
             <!-- 상단 달력 헤더 바 & 절취선 -->
             <div class="calendar-top-bar"></div>
 
-            <!-- 본문 -->
+            <!-- 본문: 전체 요소가 카드 내부 중앙에 균형 있게 배치됨 -->
             <div class="calendar-body">
-                <!-- 제본선과 그래프 박스 사이의 정중앙 영역 -->
-                <div class="year-area">
-                    <div class="year-wrapper">
-                        <div class="year-title" id="yearText">2026</div>
-                    </div>
+                <!-- 연도 + 밑줄 -->
+                <div class="year-wrapper">
+                    <div class="year-title" id="yearText">2026</div>
                 </div>
 
                 <!-- 하얀색 박스로 감싼 그래프 영역 -->
@@ -280,13 +271,10 @@
             const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
             const totalDays = isLeapYear ? 366 : 365;
 
-            // 자정(00:00:00) 기준으로 날짜 차이 정확히 계산
             const today = new Date(year, now.getMonth(), now.getDate());
             const start = new Date(year, 0, 1);
             
-            // 오늘 포함 경과 일수 (예: 11월 18일 기준 322일)
             const passedDays = Math.floor((today - start) / (1000 * 60 * 60 * 24)) + 1;
-            // 오늘 포함 남은 일수 (디데이 기준 44일)
             const leftDays = totalDays - passedDays + 1;
             
             const rawPercent = (passedDays / totalDays) * 100;

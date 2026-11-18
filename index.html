@@ -20,14 +20,14 @@
             height: 100vh;
         }
 
-        /* 콤팩트 정사각형 카드 (여백 축소 및 균형 조정) */
+        /* 콤팩트 정사각형 카드 */
         .widget-card {
             width: 205px;
             height: 205px;
             background-color: #FFF0F7;
             border: 1px solid #DBD5D7;
             border-radius: 18px;
-            padding: 22px 18px 20px;
+            padding: 18px 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -35,35 +35,44 @@
             box-shadow: 0 4px 12px rgba(97, 83, 87, 0.05);
         }
 
-        /* 상단 연도 */
+        /* 상단 연도 (살짝 아래로 내리고 밑줄 추가) */
+        .year-wrapper {
+            margin-top: 4px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #DBD5D7;
+            display: inline-block;
+        }
+
         .year-title {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 800;
             color: #615357;
             letter-spacing: 0.5px;
             line-height: 1;
         }
 
-        /* 프로그레스바 + 움직이는 퍼센트 영역 */
-        .progress-container {
+        /* 그래프 영역 (하얀 배경 네모 박스) */
+        .progress-box {
             width: 100%;
+            background-color: rgba(255, 255, 255, 0.65);
+            border-radius: 12px;
+            padding: 10px 10px 8px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            margin-top: 6px;
+            gap: 4px;
         }
 
         .percent-track {
             position: relative;
             width: 100%;
-            height: 16px;
+            height: 14px;
         }
 
         .percent-badge {
             position: absolute;
             top: 0;
             transform: translateX(-50%);
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
             color: #615357;
             white-space: nowrap;
@@ -72,9 +81,9 @@
 
         .progress-bar-bg {
             width: 100%;
-            height: 8px;
+            height: 7px;
             background-color: #DBD5D7;
-            border-radius: 4px;
+            border-radius: 3.5px;
             overflow: hidden;
         }
 
@@ -82,14 +91,14 @@
             width: 0%;
             height: 100%;
             background-color: #615357;
-            border-radius: 4px;
+            border-radius: 3.5px;
             transition: width 0.5s ease;
         }
 
         .date-range {
             display: flex;
             justify-content: space-between;
-            font-size: 9px;
+            font-size: 8.5px;
             color: #615357;
             opacity: 0.5;
             font-family: monospace;
@@ -107,20 +116,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
+            gap: 2px;
             flex: 1;
         }
 
         .stat-number {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: #615357;
             line-height: 1.1;
         }
 
-        /* 라벨 투명도 상향 (더 은은하게) */
         .stat-desc {
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: 500;
             color: #615357;
             opacity: 0.52;
@@ -129,7 +137,7 @@
         /* 세로 구분선 */
         .divider {
             width: 1px;
-            height: 24px;
+            height: 22px;
             background-color: #DBD5D7;
         }
     </style>
@@ -137,11 +145,13 @@
 <body>
 
     <div class="widget-card">
-        <!-- 상단: 연도만 단독 배치 -->
-        <div class="year-title" id="yearText">2026</div>
+        <!-- 상단: 연도 + 밑줄 -->
+        <div class="year-wrapper">
+            <div class="year-title" id="yearText">2026</div>
+        </div>
 
-        <!-- 중단: 그래프 끝에 따라 움직이는 퍼센트 + 프로그레스바 -->
-        <div class="progress-container">
+        <!-- 중단: 하얀색 박스로 감싼 그래프 영역 -->
+        <div class="progress-box">
             <div class="percent-track">
                 <span class="percent-badge" id="percentText">0.00%</span>
             </div>
@@ -192,8 +202,8 @@
             percentEl.textContent = percent + '%';
             document.getElementById('progressFill').style.width = percent + '%';
 
-            // 퍼센트 숫자가 바 끝을 따라가되, 양 끝(0% 또는 100% 근처)에서 카드 밖으로 잘리지 않도록 보정
-            const clampedPos = Math.min(Math.max(rawPercent, 10), 90);
+            // 퍼센트 숫자가 그래프 끝을 따라 이동 (카드 밖 이탈 방지)
+            const clampedPos = Math.min(Math.max(rawPercent, 12), 88);
             percentEl.style.left = clampedPos + '%';
 
             document.getElementById('passedDays').textContent = passedDays;
